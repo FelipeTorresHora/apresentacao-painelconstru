@@ -134,11 +134,37 @@ def main():
         default=[]
     )
     
-    # Aplica filtros
-    if selected_years:
-        df_filtered = df[df['year'].isin(selected_years)]
+    if 'secao_cnae' in df.columns:
+    secoes_available = sorted([str(s) for s in df['secao_cnae'].unique() if pd.notna(s) and str(s) != 'nan'])
+    selected_secoes = st.sidebar.multiselect(
+        "Selecione as seções CNAE:",
+        secoes_available,
+        default=[]
+        )
     else:
-        df_filtered = df
+        selected_secoes = []
+    
+    if 'municipio' in df.columns:
+        municipios_available = sorted([str(m) for m in df['municipio'].unique() if pd.notna(m) and str(m) != 'nan'])
+        selected_municipios = st.sidebar.multiselect(
+            "Selecione os municípios:",
+            municipios_available,
+            default=[]
+        )
+    else:
+        selected_municipios = []
+        
+    # Aplica filtros
+    df_filtered = df.copy()
+    
+    if selected_years:
+        df_filtered = df_filtered[df_filtered['year'].isin(selected_years)]
+
+    if selected_secoes and 'secao_cnae' in df_filtered.columns:
+        df_filtered = df_filtered[df_filtered['secao_cnae'].isin(selected_secoes)]
+        
+    if selected_municipios and 'municipio' in df_filtered.columns:
+        df_filtered = df_filtered[df_filtered['municipio'].isin(selected_municipios)]
     
     # Métricas principais
     col1, col2, col3, col4 = st.columns(4)
