@@ -131,7 +131,7 @@ def main():
     selected_years = st.sidebar.multiselect(
         "Selecione os anos:",
         years_available,
-        default=years_available[-3:] if len(years_available) >= 3 else years_available
+        default=[]
     )
     
     # Aplica filtros
